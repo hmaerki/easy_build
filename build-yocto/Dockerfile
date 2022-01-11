@@ -35,6 +35,15 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
+# See: ttps://medium.com/paperchain/fetching-private-github-repos-from-a-docker-container-273f25ec5a74
+# Copy SSH key for git private repos
+ADD .ssh/id_rsa /home/build/.ssh/id_rsa
+RUN chmod 600 /home/build/.ssh/id_rsa
+RUN chown build:build -R /home/build/.ssh
+
+# Skip Host verification for git
+RUN echo "StrictHostKeyChecking no" > /home/build/.ssh/config
+
 USER build
 WORKDIR /home/build
 CMD "/bin/bash"
