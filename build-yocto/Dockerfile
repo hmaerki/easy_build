@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 RUN apt-get update && apt-get -y upgrade
 
@@ -18,9 +18,9 @@ RUN chmod a+x /usr/local/bin/repo
 ARG UID=3000
 
 # Create a non-root user that will perform the actual build
-RUN id build 2>/dev/null || useradd --uid $UID --create-home build
+RUN id yocto 2>/dev/null || useradd --uid $UID --create-home yocto
 RUN apt-get install -y sudo
-RUN echo "build ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
+RUN echo "yocto ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 
 # Fix error "Please use a locale setting which supports utf-8."
 # See https://wiki.yoctoproject.org/wiki/TipsAndTricks/ResolvingLocaleIssues
@@ -36,15 +36,15 @@ ENV LANGUAGE en_US.UTF-8
 
 # See: ttps://medium.com/paperchain/fetching-private-github-repos-from-a-docker-container-273f25ec5a74
 # Copy SSH key for git private repos
-ADD .ssh/id_rsa /home/build/.ssh/id_rsa
-RUN chmod 600 /home/build/.ssh/id_rsa
-RUN chown build:build -R /home/build/.ssh
+ADD .ssh/id_rsa /home/yocto/.ssh/id_rsa
+RUN chmod 600 /home/yocto/.ssh/id_rsa
+RUN chown yocto:yocto -R /home/yocto/.ssh
 
 # Skip Host verification for git
-RUN echo "StrictHostKeyChecking no" > /home/build/.ssh/config
+RUN echo "StrictHostKeyChecking no" > /home/yocto/.ssh/config
 
-USER build
-WORKDIR /home/build
+USER yocto
+WORKDIR /home/yocto
 CMD "/bin/bash"
 
 # EOF
